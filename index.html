@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>こころの特性スクリーニング</title>
+<meta name="description" content="ADHD・ASD・うつ病・不安障害・PTSD・HSPなど11種の傾向を手軽にセルフチェックできる無料ツールです。医療的診断ではありません。">
+<meta property="og:title" content="こころの特性スクリーニング">
+<meta property="og:description" content="11種の傾向をセルフチェック。複数選択・連続受検・PDF保存に対応。">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f5;
+    --bg3: #f0ede8;
+    --text: #1a1a1a;
+    --text2: #666;
+    --text3: #999;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.2);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --purple: #7F77DD;
+    --purple-bg: #EEEDFE;
+    --purple-text: #3C3489;
+    --green: #1D9E75;
+    --green-bg: #E1F5EE;
+    --green-text: #085041;
+    --amber: #BA7517;
+    --amber-bg: #FAEEDA;
+    --amber-text: #633806;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --red-text: #791F1F;
+    --orange: #D85A30;
+    --orange-bg: #FAECE7;
+    --orange-text: #712B13;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1e;
+      --bg2: #2c2c2e;
+      --bg3: #3a3a3c;
+      --text: #f5f5f5;
+      --text2: #aaa;
+      --text3: #666;
+      --border: rgba(255,255,255,0.1);
+      --border2: rgba(255,255,255,0.2);
+      --purple-bg: #2a2650;
+      --purple-text: #b0aaf0;
+      --green-bg: #0d3325;
+      --green-text: #5dd4a8;
+      --amber-bg: #3a2800;
+      --amber-text: #f0c060;
+      --red-bg: #3a1010;
+      --red-text: #f09090;
+      --orange-bg: #3a1800;
+      --orange-text: #f0a070;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .page-header { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100; }
+  .page-header .logo { width: 32px; height: 32px; border-radius: 8px; background: var(--purple-bg); display: flex; align-items: center; justify-content: center; }
+  .page-header h1 { font-size: 16px; font-weight: 500; }
+  .page-header .sub { font-size: 12px; color: var(--text2); margin-left: auto; }
+  .container { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 10px; }
+  .prog-wrap { margin-bottom: 1.25rem; }
+  .prog-bar { height: 4px; background: var(--bg3); border-radius: 2px; }
+  .prog-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+  .opt-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 15px; color: var(--text); background: var(--bg); text-align: left; transition: all .15s; margin-bottom: 8px; font-family: inherit; }
+  .opt-btn:hover { background: var(--bg2); }
+  .opt-btn.sel { border-color: var(--sel-c, var(--purple)); background: var(--sel-bg, var(--purple-bg)); color: var(--sel-t, var(--purple-text)); }
+  .rdot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .opt-btn.sel .rdot { background: var(--sel-c, var(--purple)); border-color: var(--sel-c, var(--purple)); }
+  .opt-btn.sel .rdot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; display: block; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); font-size: 14px; cursor: pointer; background: var(--bg); color: var(--text); font-family: inherit; transition: all .15s; }
+  .btn:hover { background: var(--bg2); }
+  .btn-p { border-color: var(--purple); background: var(--purple); color: #fff; }
+  .btn-p:hover { background: #534AB7; border-color: #534AB7; }
+  .btn-lg { font-size: 16px; padding: 13px 28px; border-radius: var(--radius); }
+  .btn:disabled { opacity: .4; cursor: default; pointer-events: none; }
+  .test-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 9px; margin: .75rem 0; }
+  .tc { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: all .15s; position: relative; user-select: none; }
+  .tc:hover { border-color: var(--border2); background: var(--bg2); }
+  .tc.checked { border-color: var(--tc-c); background: var(--tc-bg); }
+  .tc .iw { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 9px; }
+  .tc h3 { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .tc .sub { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .qbadge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-top: 7px; font-weight: 500; transition: all .15s; }
+  .chk { position: absolute; top: 9px; right: 9px; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+  .tc.checked .chk { background: var(--tc-c); border-color: var(--tc-c); }
+  .chk i { display: none; color: #fff; font-size: 13px; }
+  .tc.checked .chk i { display: block; }
+  .done-dot { position: absolute; bottom: 9px; right: 9px; width: 16px; height: 16px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .bar-label { font-size: 12px; color: var(--text2); width: 96px; flex-shrink: 0; line-height: 1.4; }
+  .bar-track { flex: 1; height: 7px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width .7s ease; }
+  .notice { font-size: 12px; color: var(--text3); line-height: 1.7; margin-top: 1rem; padding-top: 1rem; border-top: 0.5px solid var(--border); }
+  .dash-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+  .lvl { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; flex-shrink: 0; white-space: nowrap; }
+  .seq-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); background: var(--bg2); padding: 4px 10px; border-radius: 20px; }
+  .section-tag { font-size: 11px; color: var(--text3); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+  .q-text { font-size: 16px; line-height: 1.7; margin-bottom: 1.25rem; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; gap: 8px; }
+  .q-counter { font-size: 13px; color: var(--text2); text-align: center; }
+  .sel-info { font-size: 13px; color: var(--text2); }
+  .sel-info strong { color: var(--text); }
+  .emergency { background: var(--red-bg); border: 0.5px solid var(--red); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .emergency h4 { font-size: 14px; font-weight: 500; color: var(--red-text); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .emergency p { font-size: 13px; color: var(--red-text); line-height: 1.7; }
+  .emergency a { color: var(--red-text); }
+  .hotline-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 0.5px solid rgba(163,45,45,.2); }
+  .hotline-row:last-child { border-bottom: none; }
+  .hotline-name { font-size: 13px; color: var(--red-text); flex: 1; }
+  .hotline-num { font-size: 14px; font-weight: 500; color: var(--red-text); }
+  .page-footer { text-align: center; padding: 32px 16px; font-size: 12px; color: var(--text3); line-height: 1.8; border-top: 0.5px solid var(--border); margin-top: 40px; }
+  @media (max-width: 480px) {
+    .test-grid { grid-template-columns: repeat(2, 1fr); }
+    .btn-lg { width: 100%; justify-content: center; }
+    .nav-row { gap: 6px; }
+    .btn { padding: 9px 14px; }
+    .dash-row { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="logo"><i class="ti ti-heart" style="font-size:18px;color:var(--purple)" aria-hidden="true"></i></div>
+  <h1>こころの特性スクリーニング</h1>
+  <span class="sub">無料・匿名</span>
+</header>
+
+<div class="container">
+
+  <!-- ホーム画面 -->
+  <div id="s-home" class="screen active">
+    <div class="card" style="margin-bottom:14px">
+      <p style="font-size:18px;font-weight:500;margin-bottom:6px">受けたいテストを選んでください</p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.7">チェックを入れて「開始」を押すと連続して受検できます。結果はPDFで保存できます。</p>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:.75rem;flex-wrap:wrap;align-items:center">
+      <button class="btn" style="font-size:13px;padding:7px 13px" onclick="selectAll(true)">すべて選択</button>
+      <button class="btn" style="font-size:13px;padding:7px 13px" onclick="selectAll(false)">選択解除</button>
+      <span class="sel-info" id="sel-info" style="margin-left:4px"></span>
+    </div>
+
+    <div class="test-grid" id="test-grid"></div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:.75rem;align-items:center">
+      <button class="btn btn-p btn-lg" id="btn-start" onclick="startSelected()" disabled>
+        <i class="ti ti-player-play" aria-hidden="true"></i> 選択したテストを開始
+      </button>
+      <button class="btn" id="btn-dash" onclick="showDash()" style="display:none;font-size:14px">
+        <i class="ti ti-chart-bar" aria-hidden="true"></i> 結果ダッシュボード
+      </button>
+    </div>
+
+    <p class="notice">このスクリーニングは医療的診断ではありません。結果はあくまで傾向の参考です。正確な診断には精神科・心療内科・発達障害専門クリニックにご相談ください。回答はブラウザ外に送信・保存されません。</p>
+  </div>
+
+  <!-- テスト画面 -->
+  <div id="s-test" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+      <button class="btn" onclick="abortTest()" style="padding:8px 12px" aria-label="中断">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+      <span id="test-title" style="font-size:16px;font-weight:500;flex:1"></span>
+      <span class="seq-badge" id="seq-badge"></span>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+    </div>
+    <div class="section-tag" id="q-section"></div>
+    <div class="q-text" id="q-text"></div>
+    <div id="q-opts"></div>
+    <div class="nav-row">
+      <button class="btn" onclick="prevQ()" id="btn-prev">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i> 戻る
+      </button>
+      <span class="q-counter" id="q-counter"></span>
+      <button class="btn btn-p" onclick="nextQ()" id="btn-next" disabled>
+        次へ <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 個別結果画面 -->
+  <div id="s-result" class="screen">
+    <div id="result-content"></div>
+  </div>
+
+  <!-- ダッシュボード -->
+  <div id="s-dash" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+      <p style="font-size:20px;font-weight:500">結果ダッシュボード</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="showScreen('s-home')">
+          <i class="ti ti-home" aria-hidden="true"></i> ホーム
+        </button>
+        <button class="btn btn-p" onclick="downloadPDF()">
+          <i class="ti ti-download" aria-hidden="true"></i> PDF保存
+        </button>
+      </div>
+    </div>
+    <div id="dash-content"></div>
+    <div class="notice">このスクリーニングは医療的診断ではありません。正確な診断には精神科・心療内科・発達障害専門クリニックへのご相談をお勧めします。</div>
+  </div>
+
+</div><!-- /container -->
+
+<footer class="page-footer">
+  <p>こころの特性スクリーニング｜無料・匿名・データ送信なし</p>
+  <p style="margin-top:6px">医療的診断ではありません。つらいときは専門家にご相談ください。</p>
+  <p style="margin-top:4px">よりそいホットライン: <a href="tel:0120279338" style="color:var(--text3)">0120-279-338</a>（24時間・無料）</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const TESTS = [
+  {id:'adhd-i', name:'ADHD（注意）', short:'注意欠如', icon:'ti-brain', color:'#7F77DD', bg:'#EEEDFE', text:'#3C3489',
+   opts:['全くない','めったにない','ときどき','よくある','非常によくある'], scores:[0,1,2,3,4],
+   sections:[
+    {s:'注意持続', qs:['細部への注意が持続せず、ミスをすることがある','課題に集中し続けることが難しい','話しかけられているのに聞いていないように見えると言われる']},
+    {s:'実行機能', qs:['指示に従えず、作業を最後まで終えられないことがある','課題や活動を順序立てることが難しい','精神的な努力が必要な作業を避けたがる']},
+    {s:'管理',     qs:['課題に必要なものを失くすことがよくある','外部の刺激で気が散りやすい','日常的な活動を忘れることがよくある']},
+   ]},
+  {id:'adhd-h', name:'ADHD（多動・衝動）', short:'多動・衝動', icon:'ti-bolt', color:'#BA7517', bg:'#FAEEDA', text:'#633806',
+   opts:['全くない','めったにない','ときどき','よくある','非常によくある'], scores:[0,1,2,3,4],
+   sections:[
+    {s:'多動', qs:['手足をそわそわ動かしたり体をもじもじさせる','座っていることが求められる場面で席を離れてしまう','静かに過ごすことが難しい']},
+    {s:'衝動', qs:['質問が終わる前に答えを言ってしまう','順番を待つことが難しい','他の人の邪魔をしたり割り込んでしまう']},
+    {s:'過活動', qs:['しゃべりすぎると言われる','じっとしていられない・何かに駆り立てられるように行動する','後先を考えず行動してしまうことがある']},
+   ]},
+  {id:'asd', name:'ASD傾向', short:'ASD', icon:'ti-puzzle', color:'#1D9E75', bg:'#E1F5EE', text:'#085041',
+   opts:['当てはまらない','あまり当てはまらない','どちらとも言えない','やや当てはまる','よく当てはまる'], scores:[0,1,2,3,4],
+   sections:[
+    {s:'社会性', qs:['他の人が何を考えているかを想像するのが難しい','社交的な場面で何を話せばいいか分からなくなる','表情や声のトーンで相手の感情を読み取るのが難しい']},
+    {s:'コミュニケーション', qs:['会話の「暗黙の意味」を理解するのが難しい','冗談や比喩を文字通りに受け取ってしまうことがある']},
+    {s:'こだわり・感覚', qs:['特定の話題に強い興味があり、いつでもその話をしたくなる','同じルーティンにこだわり変化が苦手','音・光・触感などに過敏に反応することがある','人が多い場所や騒がしい環境に強い不快感を覚える','幼い頃から「他の人と違う」と感じたり言われることがあった']},
+   ]},
+  {id:'dep', name:'うつ病', short:'うつ病', icon:'ti-cloud', color:'#378ADD', bg:'#E6F1FB', text:'#0C447C',
+   opts:['全くない','数日','半分以上の日','ほぼ毎日'], scores:[0,1,2,3],
+   note:'過去2週間の状態についてお答えください。',
+   emergency: true,
+   sections:[
+    {s:'気分', qs:['物事に対する興味や喜びがほとんどない','気分が落ち込む・憂うつ・絶望感がある','自分が悪い人間だ・失敗したという気持ちがある']},
+    {s:'身体症状', qs:['眠れない・または眠りすぎる','疲れを感じる・気力がない','食欲がない・または食べすぎる']},
+    {s:'認知・行動', qs:['集中することが難しい（読書・テレビなど）','動作や話し方が遅い・またはそわそわすると他者に指摘された','死にたいと思う・または自分を傷つけることを考える']},
+   ]},
+  {id:'anx', name:'不安障害', short:'不安障害', icon:'ti-wave-sine', color:'#D85A30', bg:'#FAECE7', text:'#712B13',
+   opts:['全くない','数日','半分以上の日','ほぼ毎日'], scores:[0,1,2,3],
+   note:'過去2週間の状態についてお答えください。',
+   sections:[
+    {s:'不安・心配', qs:['緊張・不安・神経が高ぶる感覚がある','心配するのをやめられない・コントロールできない','色々なことを過度に心配してしまう']},
+    {s:'身体・行動', qs:['くつろぐことが難しい','じっとしていられないほど落ち着かない','いらいらしやすい','悪いことが起きそうで恐れている']},
+   ]},
+  {id:'social', name:'社交不安', short:'社交不安', icon:'ti-users', color:'#D4537E', bg:'#FBEAF0', text:'#721F3F',
+   opts:['全くない','少し','かなり','非常に'], scores:[0,1,2,3],
+   sections:[
+    {s:'恐怖・回避', qs:['人前で話す・発表することが強く怖い','人と目を合わせることが難しい','恥をかくことへの強い恐れがある']},
+    {s:'身体・影響', qs:['社交場面で動悸・発汗・震えなどの身体症状が出る','注目を浴びることが苦手で避けたくなる','社交的な状況を事前に強く不安視する（予期不安）','社交不安が仕事・学校・日常生活に影響している']},
+   ]},
+  {id:'comm', name:'コミュニケーション', short:'コミュニケーション障害', icon:'ti-message-dots', color:'#639922', bg:'#EAF3DE', text:'#27500A',
+   opts:['当てはまらない','あまり当てはまらない','どちらとも言えない','当てはまる'], scores:[0,1,2,3],
+   sections:[
+    {s:'言語表現', qs:['考えを言葉にするのが難しい','話し始めると何を言いたいか忘れてしまう','適切な言葉を素早く見つけるのが難しい']},
+    {s:'会話・理解', qs:['会話の流れを読むのが難しい（割り込み・間の取り方）','冗談・皮肉・行間を読むのが苦手','複数の指示を同時に理解・記憶するのが難しい','グループ会話では発言のタイミングをつかめない']},
+   ]},
+  {id:'sensory', name:'感覚処理過敏', short:'感覚過敏', icon:'ti-ear', color:'#888780', bg:'#F1EFE8', text:'#444441',
+   opts:['全くない','少し気になる','かなり気になる','非常に強く気になる'], scores:[0,1,2,3],
+   sections:[
+    {s:'聴覚・視覚', qs:['特定の音（高音・騒音・人声）に過剰に反応する','明るい光・ちらつきが不快でたまらない']},
+    {s:'触覚・嗅覚', qs:['特定の素材や衣服の感触が我慢できない','特定のにおいに強い不快感を覚える']},
+    {s:'日常への影響', qs:['感覚刺激により集中が妨げられる','人が多い環境で感覚情報が多すぎてパニックになることがある','疲れやすく感覚刺激に長時間さらされると消耗する','感覚の問題が仕事・人間関係に影響している']},
+   ]},
+  {id:'bipolar', name:'双極性障害', short:'双極性', icon:'ti-arrows-up-down', color:'#534AB7', bg:'#EEEDFE', text:'#26215C',
+   opts:['全くない','少し当てはまる','かなり当てはまる','強く当てはまる'], scores:[0,1,2,3],
+   note:'これまでの人生での気分の波を振り返ってお答えください。',
+   sections:[
+    {s:'躁・軽躁状態', qs:['普段よりも気分が高揚し、爽快でエネルギッシュになる時期がある','睡眠が少なくても全く平気な時期がある','普段よりも多弁になり、考えが次々と浮かぶ時期がある','普段よりも衝動的な行動（浪費・無謀な計画など）をする時期がある']},
+    {s:'うつ状態', qs:['躁・軽躁とは別に、深いうつ状態になる時期がある','気分の波が激しく、周囲の人に指摘されたことがある']},
+    {s:'影響', qs:['気分の波のために、仕事・学校・人間関係に支障が出たことがある','気分の波が始まると自分でコントロールできないと感じる']},
+   ]},
+  {id:'ptsd', name:'PTSD', short:'PTSD', icon:'ti-shield-off', color:'#A32D2D', bg:'#FCEBEB', text:'#501313',
+   opts:['全くない','少し','中程度','かなり','非常に'], scores:[0,1,2,3,4],
+   note:'過去に経験した強いストレスや恐怖を伴う出来事について振り返ってお答えください。該当する経験がない場合はスキップしてください。',
+   emergency: true,
+   sections:[
+    {s:'侵入症状', qs:['過去の辛い出来事が繰り返し頭に浮かぶ（フラッシュバック）','その出来事に関する悪夢を繰り返し見る','出来事を思い出すと強い感情的苦痛を感じる']},
+    {s:'回避', qs:['その出来事に関連する考えや感情を避けようとする','その出来事を思い出させる場所・人・活動を避ける']},
+    {s:'過覚醒・認知変化', qs:['いつも警戒していて、危険が迫っている感覚がある','些細なことで驚きやすく、びくびくしてしまう','睡眠困難（眠れない・すぐ目が覚める）がある','怒りやすくなった・または感情がマヒしているように感じる']},
+   ]},
+  {id:'hsp', name:'HSP', short:'HSP', icon:'ti-sparkles', color:'#1D9E75', bg:'#E1F5EE', text:'#04342C',
+   opts:['全く当てはまらない','あまり当てはまらない','どちらとも言えない','やや当てはまる','非常によく当てはまる'], scores:[0,1,2,3,4],
+   sections:[
+    {s:'感覚処理感受性', qs:['微細な変化（音・光・におい・食感）に敏感に気づく','周囲の雰囲気や他者の感情を敏感に感じ取る','芸術・音楽・自然などに深く感動しやすい']},
+    {s:'過剰刺激', qs:['短時間に多くのことを同時に処理すると圧倒される','騒がしい場所や人が多い場所で疲弊しやすい','刺激の多い状況の後、一人でゆっくり回復する時間が必要']},
+    {s:'深い処理・共感', qs:['物事を深く考えすぎて、なかなか決断できないことがある','他者の痛みや感情を自分のことのように感じる','暴力的な映像・ニュースなどで強いショックを受ける','子どもの頃から「繊細すぎる」「感受性が強い」と言われてきた']},
+   ]},
+];
+
+const selected = new Set();
+const completed = {};
+let queue = [], queueIdx = 0;
+let curTest = null, answers = [], curIdx = 0, flatQs = [];
+
+function qCount(t) { return t.sections.reduce((s,sec) => s + sec.qs.length, 0); }
+
+function renderHome() {
+  const grid = document.getElementById('test-grid');
+  grid.innerHTML = '';
+  TESTS.forEach(t => {
+    const n = qCount(t);
+    const done = !!completed[t.id];
+    const sel = selected.has(t.id);
+    const d = document.createElement('div');
+    d.className = 'tc' + (sel ? ' checked' : '');
+    d.style.setProperty('--tc-c', t.color);
+    d.style.setProperty('--tc-bg', t.bg);
+    d.setAttribute('role', 'checkbox');
+    d.setAttribute('aria-checked', sel ? 'true' : 'false');
+    d.setAttribute('tabindex', '0');
+    d.onclick = () => toggleSelect(t.id);
+    d.onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleSelect(t.id); }};
+    d.innerHTML = `
+      <div class="chk"><i class="ti ti-check" aria-hidden="true"></i></div>
+      <div class="iw" style="background:${t.bg}">
+        <i class="ti ${t.icon}" style="font-size:17px;color:${t.color}" aria-hidden="true"></i>
+      </div>
+      <h3>${t.name}</h3>
+      <div class="sub">${t.short}</div>
+      <div class="qbadge" style="background:${sel ? t.color : t.bg};color:${sel ? '#fff' : t.text}">${n}問</div>
+      ${done ? `<div class="done-dot"><i class="ti ti-check" style="font-size:10px;color:#fff" aria-hidden="true"></i></div>` : ''}
+    `;
+    grid.appendChild(d);
+  });
+  updateSelInfo();
+}
+
+function toggleSelect(id) {
+  selected.has(id) ? selected.delete(id) : selected.add(id);
+  renderHome();
+}
+
+function selectAll(val) {
+  TESTS.forEach(t => val ? selected.add(t.id) : selected.delete(t.id));
+  renderHome();
+}
+
+function updateSelInfo() {
+  const ids = [...selected];
+  const totalQ = ids.reduce((s, id) => { const t = TESTS.find(x => x.id === id); return s + (t ? qCount(t) : 0); }, 0);
+  const info = document.getElementById('sel-info');
+  info.innerHTML = ids.length > 0
+    ? `<strong>${ids.length}種</strong> 選択中 ／ 合計 <strong>${totalQ}問</strong>`
+    : 'テストを選択してください';
+  document.getElementById('btn-start').disabled = ids.length === 0;
+  document.getElementById('btn-dash').style.display = Object.keys(completed).length > 0 ? 'inline-flex' : 'none';
+}
+
+function startSelected() {
+  queue = TESTS.filter(t => selected.has(t.id));
+  queueIdx = 0;
+  runNextInQueue();
+}
+
+function runNextInQueue() {
+  if (queueIdx >= queue.length) { showDash(); return; }
+  initTest(queue[queueIdx]);
+}
+
+function initTest(t) {
+  curTest = t;
+  flatQs = [];
+  t.sections.forEach(sec => sec.qs.forEach(q => flatQs.push({ s: sec.s, q })));
+  answers = new Array(flatQs.length).fill(undefined);
+  curIdx = 0;
+  document.getElementById('test-title').textContent = t.name;
+  document.getElementById('prog').style.background = t.color;
+  const sb = document.getElementById('seq-badge');
+  sb.innerHTML = `<i class="ti ti-list-check" aria-hidden="true"></i> テスト ${queueIdx + 1} / ${queue.length}`;
+  showScreen('s-test');
+  renderQ();
+}
+
+function renderQ() {
+  const total = flatQs.length;
+  const item = flatQs[curIdx];
+  document.getElementById('prog').style.width = ((curIdx / total) * 100) + '%';
+  document.getElementById('q-section').textContent = item.s;
+  document.getElementById('q-text').textContent = (curIdx + 1) + '. ' + item.q;
+  document.getElementById('q-counter').textContent = (curIdx + 1) + ' / ' + total + '問';
+  const optsEl = document.getElementById('q-opts');
+  optsEl.innerHTML = '';
+  if (curTest.note && curIdx === 0) {
+    const n = document.createElement('p');
+    n.style.cssText = 'font-size:13px;color:var(--text2);margin-bottom:12px;padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);line-height:1.6;border-left:3px solid ' + curTest.color;
+    n.textContent = curTest.note;
+    optsEl.appendChild(n);
+  }
+  curTest.opts.forEach((label, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn' + (answers[curIdx] === i ? ' sel' : '');
+    b.style.setProperty('--sel-c', curTest.color);
+    b.style.setProperty('--sel-bg', curTest.bg);
+    b.style.setProperty('--sel-t', curTest.text);
+    b.innerHTML = `<span class="rdot"></span>${label}`;
+    b.onclick = () => { answers[curIdx] = i; renderQ(); document.getElementById('btn-next').disabled = false; };
+    optsEl.appendChild(b);
+  });
+  const nx = document.getElementById('btn-next');
+  nx.disabled = answers[curIdx] === undefined;
+  const isLast = curIdx === total - 1;
+  const isQLast = queueIdx === queue.length - 1;
+  nx.innerHTML = isLast
+    ? (isQLast ? '結果を見る <i class="ti ti-chart-bar" aria-hidden="true"></i>' : '次のテストへ <i class="ti ti-arrow-right" aria-hidden="true"></i>')
+    : '次へ <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+  document.getElementById('btn-prev').disabled = curIdx === 0;
+}
+
+function prevQ() { if (curIdx > 0) { curIdx--; renderQ(); } }
+function nextQ() {
+  if (answers[curIdx] === undefined) return;
+  if (curIdx < flatQs.length - 1) { curIdx++; renderQ(); }
+  else finishTest();
+}
+
+function finishTest() {
+  const t = curTest;
+  const ans = [...answers];
+  const allFlatQs = [...flatQs];
+  const maxScore = t.scores[t.scores.length - 1];
+  const totalMax = allFlatQs.length * maxScore;
+  const sum = ans.reduce((a, b) => a + (b || 0), 0);
+  const pct = Math.round((sum / totalMax) * 100);
+  const sectionData = {};
+  let qi = 0;
+  t.sections.forEach(sec => {
+    let s = 0;
+    sec.qs.forEach(() => { s += (ans[qi] || 0); qi++; });
+    sectionData[sec.s] = { pct: Math.round((s / (sec.qs.length * maxScore)) * 100) };
+  });
+  const level = pct < 30 ? { l: '傾向は低め', c: '#1D9E75', bg: '#E1F5EE' }
+    : pct < 55 ? { l: '軽度の傾向あり', c: '#BA7517', bg: '#FAEEDA' }
+    : pct < 75 ? { l: '中程度の傾向あり', c: '#D85A30', bg: '#FAECE7' }
+    : { l: '顕著な傾向あり', c: '#A32D2D', bg: '#FCEBEB' };
+  completed[t.id] = { t, ans, pct, sectionData, level, allFlatQs, maxScore };
+
+  const highItems = allFlatQs.filter((_, i) => (ans[i] || 0) >= maxScore * 0.75).map(x => x.q);
+  const isQLast = queueIdx === queue.length - 1;
+  const showEmergency = t.emergency && pct >= 55;
+
+  let html = '';
+
+  if (showEmergency) {
+    html += `<div class="emergency">
+      <h4><i class="ti ti-phone" aria-hidden="true"></i> 気持ちがつらいときは</h4>
+      <div class="hotline-row"><span class="hotline-name">よりそいホットライン（24時間）</span><span class="hotline-num"><a href="tel:0120279338" style="color:inherit">0120-279-338</a></span></div>
+      <div class="hotline-row"><span class="hotline-name">こころの健康相談統一ダイヤル</span><span class="hotline-num"><a href="tel:0570064556" style="color:inherit">0570-064-556</a></span></div>
+      <div class="hotline-row"><span class="hotline-name">いのちの電話（毎日16〜21時）</span><span class="hotline-num"><a href="tel:0120783556" style="color:inherit">0120-783-556</a></span></div>
+    </div>`;
+  }
+
+  html += `<div class="card" style="border-left:3px solid ${t.color}">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="flex:1">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:3px">${t.name} スコア</p>
+        <p style="font-size:32px;font-weight:500">${pct}<span style="font-size:16px;font-weight:400">%</span></p>
+      </div>
+      <div style="padding:7px 16px;border-radius:20px;background:${level.bg};color:${level.c};font-size:13px;font-weight:500">${level.l}</div>
+    </div>
+  </div>
+  <div class="card">
+    <p style="font-size:13px;font-weight:500;margin-bottom:12px">カテゴリ別スコア</p>`;
+  Object.entries(sectionData).forEach(([sec, val]) => {
+    html += `<div class="bar-row"><span class="bar-label">${sec}</span><div class="bar-track"><div class="bar-fill" style="width:${val.pct}%;background:${t.color}"></div></div><span style="font-size:12px;color:var(--text2);width:32px;text-align:right">${val.pct}%</span></div>`;
+  });
+  html += `</div>`;
+
+  if (highItems.length > 0) {
+    html += `<div class="card"><p style="font-size:13px;font-weight:500;margin-bottom:10px">特に気になる項目</p>`;
+    highItems.slice(0, 5).forEach(q => {
+      html += `<p style="font-size:13px;color:var(--text2);padding:7px 0;border-bottom:0.5px solid var(--border);line-height:1.6">${q}</p>`;
+    });
+    html += `</div>`;
+  }
+
+  if (!isQLast) {
+    const next = queue[queueIdx + 1];
+    html += `<div class="card" style="background:var(--bg2);border-style:dashed">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:6px">次のテスト（${queueIdx + 2} / ${queue.length}）</p>
+      <p style="font-size:15px;font-weight:500">${next.name} <span style="font-size:13px;color:var(--text2);font-weight:400">— ${qCount(next)}問</span></p>
+    </div>`;
+  }
+
+  html += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+    <button class="btn" onclick="showScreen('s-home')"><i class="ti ti-home" aria-hidden="true"></i> ホームへ</button>`;
+  if (isQLast) {
+    html += `<button class="btn btn-p" onclick="showDash()"><i class="ti ti-chart-bar" aria-hidden="true"></i> ダッシュボードを見る</button>`;
+  } else {
+    html += `<button class="btn btn-p" onclick="continueQueue()">次のテストへ（${queue[queueIdx + 1].name}）<i class="ti ti-arrow-right" aria-hidden="true"></i></button>`;
+  }
+  html += `</div>`;
+  html += `<p class="notice">このスクリーニングは医療的診断ではありません。正確な診断には精神科・心療内科・発達障害専門クリニックへのご相談をお勧めします。</p>`;
+
+  document.getElementById('result-content').innerHTML = html;
+  showScreen('s-result');
+  window.scrollTo(0, 0);
+}
+
+function continueQueue() { queueIdx++; runNextInQueue(); }
+
+function abortTest() {
+  if (confirm('テストを中断してホームに戻りますか？\n（回答中の結果は保存されません）')) {
+    showScreen('s-home');
+  }
+}
+
+function showDash() {
+  const keys = Object.keys(completed);
+  if (keys.length === 0) { showScreen('s-home'); return; }
+  let html = '';
+  keys.forEach(id => {
+    const r = completed[id];
+    const t = r.t;
+    html += `<div class="dash-row">
+      <div style="display:flex;align-items:center;gap:8px;width:148px;flex-shrink:0">
+        <div style="width:26px;height:26px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ${t.icon}" style="font-size:13px;color:${t.color}" aria-hidden="true"></i>
+        </div>
+        <span style="font-size:13px;font-weight:500">${t.short}</span>
+      </div>
+      <div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${r.pct}%;background:${t.color}"></div></div>
+      <span style="font-size:13px;color:var(--text2);width:36px;text-align:right">${r.pct}%</span>
+      <span class="lvl" style="background:${r.level.bg};color:${r.level.c}">${r.level.l}</span>
+    </div>`;
+  });
+  html += `<div class="card" style="margin-top:12px">
+    <p style="font-size:13px;font-weight:500;margin-bottom:12px">全体スコア比較</p>`;
+  keys.forEach(id => {
+    const r = completed[id];
+    html += `<div class="bar-row"><span class="bar-label">${r.t.short}</span><div class="bar-track"><div class="bar-fill" style="width:${r.pct}%;background:${r.t.color}"></div></div><span style="font-size:12px;color:var(--text2);width:32px;text-align:right">${r.pct}%</span></div>`;
+  });
+  html += `</div>`;
+  document.getElementById('dash-content').innerHTML = html;
+  showScreen('s-dash');
+  window.scrollTo(0, 0);
+}
+
+function hexToRGB(hex) {
+  return { r: parseInt(hex.slice(1,3),16), g: parseInt(hex.slice(3,5),16), b: parseInt(hex.slice(5,7),16) };
+}
+
+function downloadPDF() {
+  if (!window.jspdf) { alert('PDFライブラリを読み込み中です。少し待ってから再試行してください。'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const today = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+  let y = 20;
+
+  doc.setFontSize(17); doc.setFont(undefined, 'bold'); doc.setTextColor(40, 40, 40);
+  doc.text('こころの特性スクリーニング 結果レポート', 20, y); y += 7;
+  doc.setFontSize(10); doc.setFont(undefined, 'normal'); doc.setTextColor(130, 130, 130);
+  doc.text('実施日: ' + today, 20, y); y += 10;
+  doc.setDrawColor(220, 220, 220); doc.line(20, y, 190, y); y += 9;
+
+  const keys = Object.keys(completed);
+  if (keys.length === 0) {
+    doc.setTextColor(80, 80, 80); doc.setFontSize(12); doc.text('テスト結果がありません。', 20, y);
+  } else {
+    keys.forEach(id => {
+      if (y > 248) { doc.addPage(); y = 20; }
+      const r = completed[id]; const t = r.t;
+      const rgb = hexToRGB(t.color);
+      doc.setFillColor(rgb.r, rgb.g, rgb.b);
+      doc.roundedRect(20, y - 4, 4, 14, 2, 2, 'F');
+      doc.setFontSize(13); doc.setFont(undefined, 'bold'); doc.setTextColor(40, 40, 40);
+      doc.text(t.name, 27, y); y += 6;
+      doc.setFontSize(11); doc.setFont(undefined, 'normal'); doc.setTextColor(80, 80, 80);
+      doc.text('総合スコア: ' + r.pct + '%  ／  ' + r.level.l, 27, y); y += 10;
+      Object.entries(r.sectionData).forEach(([sec, val]) => {
+        if (y > 272) { doc.addPage(); y = 20; }
+        doc.setFontSize(10); doc.setTextColor(110, 110, 110);
+        doc.text(sec + ': ' + val.pct + '%', 27, y);
+        doc.setFillColor(235, 235, 235); doc.roundedRect(75, y - 3.5, 100, 4, 2, 2, 'F');
+        if (val.pct > 0) {
+          doc.setFillColor(rgb.r, rgb.g, rgb.b);
+          doc.roundedRect(75, y - 3.5, val.pct, 4, 2, 2, 'F');
+        }
+        y += 7;
+      });
+      y += 5; doc.setDrawColor(230, 230, 230); doc.line(20, y, 190, y); y += 8;
+    });
+  }
+
+  doc.setFontSize(8); doc.setTextColor(160, 160, 160);
+  const disc = 'このスクリーニングは医療的な診断ではありません。正確な診断には精神科・心療内科・発達障害専門クリニックへのご相談をお勧めします。';
+  doc.text(doc.splitTextToSize(disc, 170), 20, 280);
+  doc.save('スクリーニング結果_' + today.replace(/[年月日\s]/g, '') + '.pdf');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 's-home') renderHome();
+}
+
+renderHome();
+</script>
+</body>
+</html>
