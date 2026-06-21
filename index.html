@@ -120,6 +120,12 @@
   .hotline-name { font-size: 13px; color: var(--red-text); flex: 1; }
   .hotline-num { font-size: 14px; font-weight: 500; color: var(--red-text); }
   .page-footer { text-align: center; padding: 32px 16px; font-size: 12px; color: var(--text3); line-height: 1.8; border-top: 0.5px solid var(--border); margin-top: 40px; }
+  .consult-link { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:0.5px solid var(--border); text-decoration:none; color:var(--text); transition:background .15s; border-radius:0; }
+  .consult-link:hover { color:var(--purple); }
+  .consult-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px; }
+  .consult-body { flex:1; }
+  .consult-name { font-size:14px; font-weight:500; margin-bottom:2px; }
+  .consult-desc { font-size:12px; color:var(--text2); line-height:1.5; }
   @media (max-width: 480px) {
     .test-grid { grid-template-columns: repeat(2, 1fr); }
     .btn-lg { width: 100%; justify-content: center; }
@@ -211,6 +217,43 @@
       </div>
     </div>
     <div id="dash-content"></div>
+    <div class="card" style="margin-top:.75rem">
+      <p style="font-size:14px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <i class="ti ti-phone-call" style="color:var(--purple)" aria-hidden="true"></i> 専門家・相談窓口
+      </p>
+      <a href="https://kokoro.mhlw.go.jp" target="_blank" rel="noopener noreferrer" class="consult-link">
+        <div class="consult-icon" style="background:#E6F1FB"><i class="ti ti-building-hospital" style="color:#378ADD" aria-hidden="true"></i></div>
+        <div class="consult-body">
+          <p class="consult-name">こころの耳（厚生労働省）</p>
+          <p class="consult-desc">働く人のメンタルヘルス・ポータルサイト。セルフチェックや相談窓口一覧あり</p>
+        </div>
+        <i class="ti ti-external-link" style="color:var(--text3);flex-shrink:0" aria-hidden="true"></i>
+      </a>
+      <a href="https://www.rehab.go.jp/ddis/" target="_blank" rel="noopener noreferrer" class="consult-link">
+        <div class="consult-icon" style="background:#E1F5EE"><i class="ti ti-puzzle" style="color:#1D9E75" aria-hidden="true"></i></div>
+        <div class="consult-body">
+          <p class="consult-name">発達障害情報・支援センター</p>
+          <p class="consult-desc">ADHD・ASD等の情報と、全国の支援機関を検索できる国立機関のサイト</p>
+        </div>
+        <i class="ti ti-external-link" style="color:var(--text3);flex-shrink:0" aria-hidden="true"></i>
+      </a>
+      <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/soudan/index.html" target="_blank" rel="noopener noreferrer" class="consult-link">
+        <div class="consult-icon" style="background:#FAEEDA"><i class="ti ti-map-pin" style="color:#BA7517" aria-hidden="true"></i></div>
+        <div class="consult-body">
+          <p class="consult-name">こころの健康相談統一ダイヤル</p>
+          <p class="consult-desc">0570-064-556｜各都道府県の専門家に電話で相談できる公的窓口</p>
+        </div>
+        <i class="ti ti-external-link" style="color:var(--text3);flex-shrink:0" aria-hidden="true"></i>
+      </a>
+      <a href="tel:0120279338" class="consult-link" style="border-bottom:none">
+        <div class="consult-icon" style="background:#FCEBEB"><i class="ti ti-heart-handshake" style="color:#A32D2D" aria-hidden="true"></i></div>
+        <div class="consult-body">
+          <p class="consult-name">よりそいホットライン</p>
+          <p class="consult-desc">0120-279-338｜24時間・無料・匿名でこころの悩みを相談できる</p>
+        </div>
+        <i class="ti ti-phone" style="color:var(--text3);flex-shrink:0" aria-hidden="true"></i>
+      </a>
+    </div>
     <div class="notice">このスクリーニングは医療的診断ではありません。正確な診断には精神科・心療内科・発達障害専門クリニックへのご相談をお勧めします。</div>
   </div>
 
